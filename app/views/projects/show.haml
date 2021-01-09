@@ -1,0 +1,95 @@
+
+.container.m-auto 
+
+  .grid.md:grid-cols-2 
+    .py-6 
+      .text-5xl.font-extrabold.uppercase.leading-none
+        #{@project["Name"]}
+      .text-base
+        #{@project["Tagline"]}
+    .py-6.text-right 
+      .py-6
+        .uppercase.text-gray-700.text-xs.inline.px-6
+          Streaming #{@project.start_date} at #{@project.start_time}
+
+        .bg-purple-800.px-6.py-3.rounded.text-white.inline.cursor-pointer
+          Watch
+    
+  .grid.md:grid-cols-2.gap-6 
+    %div 
+      .bg-white.shadow.py-4.px-6.rounded-lg.mb-6
+        .font-bold.text-2xl.mb-3 About the project 
+        .font-sm 
+          #{@description.html_safe}
+        
+        -if @project["Video URL"].present?
+          %iframe.rounded.shadow.mt-3{:allow => "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture", :allowfullscreen => "", :frameborder => "0", :height => "315", :src => "#{@project['Video URL']}", :width => "560"}
+
+      .bg-white.shadow.py-4.px-6.rounded-lg.mb-6
+        .font-bold.text-2xl.mb-3 The Team
+        .font-sm 
+          -@project.team_members.each do |person|
+            .shadow.p-4.flex.mb-3.rounded 
+              %div
+                -if person.picture
+                  =image_tag person.picture["thumbnails"]["small"]["url"], class: "rounded-full shadow mr-3 mt-2 inline"
+              %div 
+                .font-bold 
+                  =person.name
+                .text-sm.text-gray-800
+                  =person["Tagline"]
+
+
+      .bg-white.shadow.py-4.px-6.rounded-lg.mb-6
+        .font-bold.text-2xl.mb-3 Tasks
+        .font-sm 
+          -if @project["Tasks"]
+
+            %ul.-mb-8
+              -@tasks.each_with_index do |task,index|
+                %li
+                  .relative.pb-8
+                    -unless index == @tasks.size - 1
+                      %span.absolute.top-4.left-4.-ml-px.h-full.bg-gray-200{"aria-hidden" => "true", :class => "w-1"}
+                    .relative.flex.space-x-3
+                      %div
+                        %span.h-8.w-8.rounded-full.flex.items-center.justify-center.ring-8.ring-white{class:"#{task.is_complete? ? 'bg-green-500' : 'bg-gray-300'}"}
+                          %svg.h-5.w-5.text-white{"aria-hidden" => "true", :fill => "currentColor", :viewbox => "0 0 20 20", "x-description" => "Heroicon name: check", :xmlns => "http://www.w3.org/2000/svg"}
+                            %path{"clip-rule" => "evenodd", :d => "M16.707 5.293a1 1 0 010 1.414l-8 8a1 1 0 01-1.414 0l-4-4a1 1 0 011.414-1.414L8 12.586l7.293-7.293a1 1 0 011.414 0z", "fill-rule" => "evenodd"}
+                      .min-w-0.flex-1.flex.justify-between.space-x-4{:class => "pt-1.5"}
+                        %div
+                          %p.pt-1.text-base{class:"#{task.is_complete? ? 'text-gray-600 font-bold' : 'text-gray-500'}"}
+                            #{task["Name"]}
+                        
+                        -if task.is_complete?
+                          .text-right.text-sm.whitespace-nowrap.text-gray-500
+                            %time{:datetime => "#{task['Completed At']}"} #{task.completed_at_display}
+    
+    %div 
+      .bg-white.shadow.py-4.px-6.rounded-lg.mb-6 
+        .font-bold.text-2xl.mb-3 Stream
+        .font-sm 
+          The project will begin streaming on #{@project.start_date} at #{@project.start_time}. Leave your email address below to be notified when it goes live.
+          %form.sm:flex.mt-4
+            %label.sr-only{:for => "emailAddress"} Email address
+            %input.shadow.w-full.px-5.py-3.border.border-transparent.placeholder-gray-500.focus:ring-2.focus:ring-offset-2.focus:ring-offset-gray-800.focus:ring-white.focus:border-white.sm:max-w-xs.rounded-md{:autocomplete => "email", :name => "emailAddress", :placeholder => "Enter your email adress", :required => "", :type => "email"}/
+            .mt-3.rounded-md.shadow.sm:mt-0.sm:ml-3.sm:flex-shrink-0
+              %button.w-full.flex.items-center.justify-center.px-5.py-3.border.border-transparent.text-base.font-medium.rounded-md.text-white.bg-purple-800.hover:bg-indigo-600.focus:outline-none.focus:ring-2.focus:ring-offset-2.focus:ring-offset-gray-800.focus:ring-indigo-500{:type => "submit"}
+                Notify me
+
+
+              
+
+
+
+      .bg-white.shadow.py-4.px-6.rounded-lg.mb-6
+        .font-bold.text-2xl.mb-3 Updates
+        .font-sm 
+          -if !@project.has_started?
+            Updates will appear here once the project has begun
+
+      .bg-white.shadow.py-4.px-6.rounded-lg 
+        .font-bold.text-2xl.mb-3 Results
+        .font-sm 
+          -if !@project.has_started?
+            Results will appear here once the project has begun

@@ -1,0 +1,14 @@
+<!DOCTYPE html>
+<html class="bg-gray-100">
+  <head>
+    <title><%= page_title %></title>
+    <%= csrf_meta_tags %>
+    <%= csp_meta_tag %>
+
+    <%= stylesheet_link_tag    'tailwind', media: 'all' %>
+  </head>
+
+  <body>
+    <%= yield %>
+  </body>
+</html>
